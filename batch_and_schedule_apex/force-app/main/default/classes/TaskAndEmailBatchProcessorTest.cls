@@ -12,11 +12,17 @@ public with sharing class TaskAndEmailBatchProcessorTest {
             tasks.add(new Task__c(
                 Name='Task_'+j,
                  Due_Date__c=Date.today().addDays((Integer)(j*Math.pow(-1,j))),
-                 Project__c=project.Id));
+                 Project__c=project.Id,
+                 Task_Cost__c=j
+                 ));
         }
-        insert tasks;
+        tasks.add(new Task__c());
+        Database.SaveResult []results=Database.insert(tasks,false);
+        ApexDatabaseLogger.log(results);
         Test.startTest();
             Database.executeBatch(new TaskAndEmailBatchProcessor(),10);
         Test.stopTest();
+        Project__c updatedProject=[SELECT Total_Cost__c FROM Project__c WHERE Id=:project.Id];
+        System.Assert.areEqual(45,updatedProject.Total_Cost__c,'Expected total cost to be 45');
     }
 }
