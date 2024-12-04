@@ -15,17 +15,17 @@ global with sharing class TaskAndEmailBatchProcessor implements Database.Batchab
     private Decimal totalCost=0;
 
     /**
-     * @description : Fetches all Task__c records to be processed by the batch job.
+     * @description   : Fetches all Task__c records to be processed by the batch job.
      * @param context : The batch context passed by the Salesforce platform.
-     * @return : A Database.QueryLocator for Task__c records.
+     * @return        : A Database.QueryLocator for Task__c records.
      */
     global Database.QueryLocator start(Database.BatchableContext context){
         return Database.getQueryLocator('SELECT ID,NAME,TASK_STATUS__C,DUE_DATE__C,Task_Cost__c,Project__c,Project__r.Id,Project__r.Total_Cost__c FROM Task__c');
     }
 
     /**
-     * @description : Processes a batch of Task__c records, calculates overdue tasks, 
-     *                updates task statuses and project costs, and logs the results.
+     * @description   : Processes a batch of Task__c records, calculates overdue tasks, 
+     *                  updates task statuses and project costs, and logs the results.
      * @param context : The batch context passed by the Salesforce platform.
      * @param tasks   : A list of Task__c records to be processed in this batch.
      */
@@ -62,7 +62,7 @@ global with sharing class TaskAndEmailBatchProcessor implements Database.Batchab
 
     /**
      * @description : Constructs the email body with a summary of the batch processing results.
-     * @return : An HTML string containing the batch processing summary.
+     * @return      : An HTML string containing the batch processing summary.
      */
     private String getEmailBody(){
         String html='Dear Admin,<br/> Running Batch Job For Task Overdue Calculation and Summary Report is Done. Here is the short report<br/>';
@@ -89,7 +89,7 @@ global with sharing class TaskAndEmailBatchProcessor implements Database.Batchab
      * @param context : The batch context passed by the Salesforce platform.
      */
     global void finish(Database.BatchableContext context){
-        User []systemAdmins=[SELECT Id, Name, Email from USER where Profile.Name='System Administrator'];
+        System.debug('Finilizing batch');
         EmailService.sendMailToSystemAdmins('Batch Job Run Successfull', getEmailBody());
     }
 }

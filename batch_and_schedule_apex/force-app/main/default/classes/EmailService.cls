@@ -41,7 +41,13 @@ public with sharing class EmailService {
         }
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         mail.setToAddresses(emails);
+        mail.setSaveAsActivity(false);
         mail.setSubject(subject);
         mail.setHtmlBody(body);
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
+        System.debug('Email Sent to '+emails.size()+' users');
+        for(String email:emails){
+            System.debug('Email Sent to '+email);
+        }
     }
 }
